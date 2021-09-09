@@ -32,6 +32,12 @@ services:
       - APACHE_HTTPS_PORT_NUMBER=443
 volumes:
   mariadb-data:
-    driver: local
+    driver: azure_file
+    driver_opts:
+      share_name: wpgigya-db
+      storage_account_name: bacardistorageaccount
   wordpress-data:
-    driver: local
+    driver: azure_file
+    driver_opts:
+      share_name: wpgigya-wordpress
+      storage_account_name: bacardistorageaccount

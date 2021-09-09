@@ -20,6 +20,8 @@ RUN . /opt/bitnami/scripts/libcomponent.sh && component_unpack "gosu" "1.14.0-0"
 RUN chmod g+rwX /opt/bitnami
 
 COPY rootfs /
+COPY wordpress-gigya-plugin /opt/bitnami/wordpress/wp-content/plugins/wordpress-gigya-plugin
+RUN chmod g+rwX /opt/bitnami/wordpress/wp-content/plugins/wordpress-gigya-plugin
 RUN /opt/bitnami/scripts/mysql-client/postunpack.sh
 RUN /opt/bitnami/scripts/apache/postunpack.sh
 RUN /opt/bitnami/scripts/php/postunpack.sh
@@ -27,8 +29,8 @@ RUN /opt/bitnami/scripts/apache-modphp/postunpack.sh
 RUN /opt/bitnami/scripts/wordpress/postunpack.sh
 ENV ALLOW_EMPTY_PASSWORD="no" \
     APACHE_ENABLE_CUSTOM_PORTS="no" \
-    APACHE_HTTPS_PORT_NUMBER="" \
-    APACHE_HTTP_PORT_NUMBER="" \
+    APACHE_HTTPS_PORT_NUMBER="443" \
+    APACHE_HTTP_PORT_NUMBER="80" \
     BITNAMI_APP_NAME="wordpress" \
     BITNAMI_IMAGE_VERSION="5.8.0-debian-10-r33" \
     MARIADB_HOST="mariadb" \
@@ -43,8 +45,7 @@ ENV ALLOW_EMPTY_PASSWORD="no" \
     MYSQL_CLIENT_SSL_CA_FILE="" \
     PATH="/opt/bitnami/php/bin:/opt/bitnami/php/sbin:/opt/bitnami/apache/bin:/opt/bitnami/wp-cli/bin:/opt/bitnami/mysql/bin:/opt/bitnami/common/bin:$PATH"
 
-EXPOSE 8080 8443
+EXPOSE 80 443
 
-USER 1001
 ENTRYPOINT [ "/opt/bitnami/scripts/wordpress/entrypoint.sh" ]
 CMD [ "/opt/bitnami/scripts/apache/run.sh" ]
