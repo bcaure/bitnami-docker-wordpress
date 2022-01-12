@@ -21,9 +21,10 @@ Pre-requisites: Create Azure Container Registry (ACR), create Azure storage acco
 6. Login to Azure with Docker `docker login azure`
 7. In _docker-compose.yml_: 
   - Change the _wordpress_ service image: `image: benjamincaure.azurecr.io/bitnami-wordpress:latest`
+  - Change the _wordress_ service domain name: `domainname: <aNonExistingDomain>`
   - Change the _volumes_ config to match your Azure storage: `storage_account_name: wordpress` `share_name: wordpress-files` `share_name: wordpress-db`
 9. Use docker compose (not docker-compose!!) to start containers in Azure: `docker compose up --build -d`
-10. Run `docker ps`to see the IP address where Wordpress is running, access this IP address from the browser
+10. Run `docker ps` to see the IP address or the domain name to access from the browser (normally you can access using the domain `<aNonExistingDomain>.<region>.azurecontainer.io`)
 11. Log-in as administrator with the user/password defined in _docker-compose.yml_ :
   - WORDPRESS_USERNAME=user
   - WORDPRESS_PASSWORD=wp-bitnami-aci

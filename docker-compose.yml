@@ -13,6 +13,7 @@ services:
       - MARIADB_DATABASE=bitnami_wordpress
   wordpress:
     build: ./5/debian-10
+    domainname: "wordpressbenjamincaure"
     image: benjamincaure.azurecr.io/bitnami-wordpress:latest
     ports:
       - '80:80'
