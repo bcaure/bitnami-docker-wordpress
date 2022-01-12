@@ -12,7 +12,8 @@ services:
       - MARIADB_ROOT_PASSWORD=aeaeazeazfklds
       - MARIADB_DATABASE=bitnami_wordpress
   wordpress:
-    image: wpgigya.azurecr.io/bitnami-wordpress:latest
+    build: ./5/debian-10
+    image: benjamincaure.azurecr.io/bitnami-wordpress:latest
     ports:
       - '80:80'
       - '443:443'
@@ -22,7 +23,7 @@ services:
       - mariadb
     environment:
       # ALLOW_EMPTY_PASSWORD is recommended only for development.
-      - ALLOW_EMPTY_PASSWORD=yes
+      - ALLOW_EMPTY_PASSWORD=no
       - WORDPRESS_DATABASE_HOST=mariadb
       - WORDPRESS_DATABASE_PORT_NUMBER=3306
       - WORDPRESS_DATABASE_USER=bn_wordpress
@@ -30,8 +31,16 @@ services:
       - WORDPRESS_DATABASE_NAME=bitnami_wordpress
       - APACHE_HTTP_PORT_NUMBER=80
       - APACHE_HTTPS_PORT_NUMBER=443
+      - WORDPRESS_USERNAME=user
+      - WORDPRESS_PASSWORD=wp-bitnami-aci
 volumes:
   mariadb-data:
-    driver: local
+    driver: azure_file
+    driver_opts:
+      share_name: wordpress-db
+      storage_account_name: wordpressdb
   wordpress-data:
-    driver: local
+    driver: azure_file
+    driver_opts:
+      share_name: wordpress-files
+      storage_account_name: wordpressdb
