@@ -24,8 +24,8 @@ if [[ "$1" = "/opt/bitnami/scripts/$(web_server_type)/run.sh" || "$1" = "/opt/bi
     /opt/bitnami/scripts/mysql-client/setup.sh
     /opt/bitnami/scripts/wordpress/setup.sh
     /post-init.sh
-    info "** Installing Gigya Plugin dependencies with Composer  **"
-    composer install --working-dir=/opt/bitnami/wordpress/wp-content/plugins/wordpress-gigya-plugin
+    # info "** Installing Gigya Plugin dependencies with Composer  **"
+    # composer install --working-dir=/opt/bitnami/wordpress/wp-content/plugins/wordpress-gigya-plugin
     info "** WordPress setup finished! **"
 fi
 

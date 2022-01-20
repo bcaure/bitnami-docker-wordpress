@@ -5,29 +5,51 @@
 ### Test locally with local docker
 
 1. Go to 5/debian-10
-2. Build the Wordpress image `docker build -t bitnami-wordpress . `
-3. Return to root directory and run the _docker-compose-local.yml_ file: `docker-compose up -f docker-compose-local.yml`
+2. Build the Wordpress image `docker build -t bitnami-wordpress .`
+3. Return to root directory and run the _docker-compose-local.yml_ file: `docker-compose -f docker-compose-local.yml up`
+4. Login as administrator in `http://localhost/wp-admin` using
+  - WORDPRESS_USERNAME=user
+  - WORDPRESS_PASSWORD=wp-bitnami-aci
 
 ### Deploy to Azure ACI
 
 Pre-requisites: Create Azure Container Registry (ACR), create Azure storage account with file shares called _wordpress-db_ and _wordpress-files_
 
+#### Push the image to Azure ACR
 1. Go to 5/debian-10
-2. Build the Wordpress image `docker build -t bitnami-wordpress . `
-3. Tag the image to your registry `docker tag bitnami-wordpress benjamincaure.azurecr.io/bitnami-wordpress:latest`
+2. Build the Wordpress image `docker build -t bitnami-wordpress .`
+3. Tag the image to your registry `docker tag bitnami-wordpress benjamincaure.azurecr.io/bitnami-wordpress`
 4. Login to the your registry `az acr login --name benjamincaure.azurecr.io`
-4. Push the image to your registry `docker push benjamincaure.azurecr.io/bitnami-wordpress:latest`
-5. Return to root directory and create the ACI context `docker context create aci benjamincaureuca` or use the existing one `docker context use benjamincaureuca`
-6. Login to Azure with Docker `docker login azure`
-7. In _docker-compose.yml_: 
-  - Change the _wordpress_ service image: `image: benjamincaure.azurecr.io/bitnami-wordpress:latest`
-  - Change the _wordress_ service domain name: `domainname: <aNonExistingDomain>`
-  - Change the _volumes_ config to match your Azure storage: `storage_account_name: wordpress` `share_name: wordpress-files` `share_name: wordpress-db`
-9. Use docker compose (not docker-compose!!) to start containers in Azure: `docker compose up --build -d`
-10. Run `docker ps` to see the IP address or the domain name to access from the browser (normally you can access using the domain `<aNonExistingDomain>.<region>.azurecontainer.io`)
-11. Log-in as administrator with the user/password defined in _docker-compose.yml_ :
+4. Push the image to your registry `docker push benjamincaure.azurecr.io/bitnami-wordpress`
+
+#### Customize the docker-compose file
+1. Edit _docker-compose.yml_: 
+2. Change the _wordpress_ service image: `image: benjamincaure.azurecr.io/bitnami-wordpress:latest`
+3. Change the _wordress_ service domain name: `domainname: <aNonExistingDomain>`
+4. Change the _volumes_ config to match your Azure storage: `storage_account_name: wordpress` `share_name: wordpress-files` `share_name: wordpress-db`
+
+#### Run docker compose in Azure ACI context
+1. Return to root directory and create the ACI context `docker context create aci benjamincaureuca` or use the existing one `docker context use benjamincaureuca`
+2. Login to Azure with Docker `docker login azure`
+4. Use docker compose (not docker-compose!!) to start containers in Azure: `docker compose up --build -d`
+5. Run `docker ps` to see the IP address or the domain name to access from the browser (normally you can access using the domain `<aNonExistingDomain>.<region>.azurecontainer.io`)
+6. In case of error, run `docker logs <wordpress container name>` to see Azure logs
+7. If everything's fine, log-in as administrator with the user/password defined in _docker-compose.yml_ :
   - WORDPRESS_USERNAME=user
   - WORDPRESS_PASSWORD=wp-bitnami-aci
+
+## Update the Dockerfile
+1. After updating the Dockerfile, run `docker context use default` and perform the "Push the image to Azure ACR" steps.
+2. Stop and remove containers
+```
+docker compose down
+```
+3. **Remove volumes**!! unless the new image might not take changes into account.
+```
+docker volume rm wordpressdb/wordpress-files
+docker volume rm wordpressdb/wordpress-db
+```
+4. Perform the "Run docker compose in Azure ACI context" steps
 
 ## Why use Bitnami Images?
 

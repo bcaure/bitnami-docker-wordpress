@@ -30,6 +30,8 @@ services:
       - WORDPRESS_DATABASE_NAME=bitnami_wordpress
       - APACHE_HTTP_PORT_NUMBER=80
       - APACHE_HTTPS_PORT_NUMBER=443
+      - WORDPRESS_USERNAME=user
+      - WORDPRESS_PASSWORD=wp-bitnami-aci
 volumes:
   mariadb-data:
     driver: local

@@ -1,6 +1,8 @@
 FROM docker.io/bitnami/minideb:buster
 LABEL maintainer "Bitnami <containers@bitnami.com>"
 
+ARG WORDPRESS_DIR=/opt/bitnami/wordpress
+
 ENV HOME="/" \
     OS_ARCH="amd64" \
     OS_FLAVOUR="debian-10" \
@@ -20,8 +22,16 @@ RUN . /opt/bitnami/scripts/libcomponent.sh && component_unpack "gosu" "1.14.0-0"
 RUN chmod g+rwX /opt/bitnami
 
 COPY rootfs /
-COPY wordpress-gigya-plugin /opt/bitnami/wordpress/wp-content/plugins/wordpress-gigya-plugin
-RUN chmod g+rwX /opt/bitnami/wordpress/wp-content/plugins/wordpress-gigya-plugin
+
+# Install Gigya plugin
+# COPY wordpress-gigya-plugin ${WORDPRESS_DIR}/wp-content/plugins/wordpress-gigya-plugin
+# RUN chmod g+rwX ${WORDPRESS_DIR}/wp-content/plugins/wordpress-gigya-plugin
+
+# Install miniOrange Openid client plugin
+COPY miniorange-openid-client-plugin ${WORDPRESS_DIR}/wp-content/plugins/miniorange-openid-client-plugin
+RUN chmod g+rwX ${WORDPRESS_DIR}/wp-content/plugins/miniorange-openid-client-plugin
+
+# Rest of bitnami install
 RUN /opt/bitnami/scripts/mysql-client/postunpack.sh
 RUN /opt/bitnami/scripts/php/postunpack.sh
 RUN /opt/bitnami/scripts/apache/postunpack.sh
@@ -44,6 +54,16 @@ ENV ALLOW_EMPTY_PASSWORD="no" \
     MYSQL_CLIENT_ENABLE_SSL="no" \
     MYSQL_CLIENT_SSL_CA_FILE="" \
     PATH="/opt/bitnami/php/bin:/opt/bitnami/php/sbin:/opt/bitnami/apache/bin:/opt/bitnami/wp-cli/bin:/opt/bitnami/mysql/bin:/opt/bitnami/common/bin:$PATH"
+
+# Install custom Javascript
+ARG CUSTOM_SCRIPT_PATH=https://gigya-oidc.azurewebsites.net/demo-site/wordpress-script.js
+ARG THEME_DIR_2019=${WORDPRESS_DIR}/wp-content/themes/twentynineteen
+ARG THEME_DIR_2020=${WORDPRESS_DIR}/wp-content/themes/twentytwenty
+ARG THEME_DIR_2021=${WORDPRESS_DIR}/wp-content/themes/twentytwentyone
+RUN echo "wp_enqueue_script('script', '${CUSTOM_SCRIPT_PATH}', null, 1.1, true);" >> ${THEME_DIR_2019}/functions.php
+RUN echo "wp_enqueue_script('script', '${CUSTOM_SCRIPT_PATH}', null, 1.1, true);" >> ${THEME_DIR_2020}/functions.php
+RUN echo "wp_enqueue_script('script', '${CUSTOM_SCRIPT_PATH}', null, 1.1, true);" >> ${THEME_DIR_2021}/functions.php
+
 
 EXPOSE 80 443
 
