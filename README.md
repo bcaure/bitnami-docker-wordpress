@@ -1,5 +1,8 @@
 # Deploy WordPress in Azure Containers
 
+## Wordpress Bitnami image
+Doc: https://github.com/bitnami/bitnami-docker-apache
+
 ## Getting started
 
 ### Test locally with local docker
@@ -33,7 +36,7 @@ Pre-requisites: Create Azure Container Registry (ACR), create Azure storage acco
 2. Login to Azure with Docker `docker login azure`
 4. Use docker compose (not docker-compose!!) to start containers in Azure: `docker compose up --build -d`
 5. Run `docker ps` to see the IP address or the domain name to access from the browser (normally you can access using the domain `<aNonExistingDomain>.<region>.azurecontainer.io`)
-6. In case of error, run `docker logs <wordpress container name>` to see Azure logs
+6. In case of error, run `docker logs bitnami-docker-wordpress_wordpress` to see Azure logs
 7. If everything's fine, log-in as administrator with the user/password defined in _docker-compose.yml_ :
   - WORDPRESS_USERNAME=user
   - WORDPRESS_PASSWORD=wp-bitnami-aci
